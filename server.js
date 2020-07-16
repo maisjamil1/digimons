@@ -58,20 +58,27 @@ function digiCONS(digimon) {
     this.image = digimon.img || 'no image'
 }
 // //(addTO)_______________________________________________________
-function addTo(req, res) {
-    const { name, image, level } = req.body;
-    const sql = 'INSERT INTO ydigimon(name , image , level)VALUES($1,$2,$3);'
-    const Values = [name, image, level];
-    client.query(sql, Values)
-        .then((result) => {
 
+function addTo(req, res) {
+    // const sqlChecking = "SELECT * FROM ydigimon WHERE name=$1;"
+    const { name, image, level } = req.body;//req.body.name|req.body.level|req.body.image
+    const sqlChecking = "SELECT * FROM ydigimon WHERE name=$1 AND image=$2 AND level=$3;"
+    const VALUES = [name, image, level];
+    const SQL = "INSERT INTO ydigimon (name, image, level) VALUES ($1, $2, $3);"
+
+    client.query(sqlChecking, VALUES).then((Checking) => {
+        if (Checking.rows.length === 0) {
+            client.query(SQL, VALUES).then(results => {
+                res.redirect('/showFav')
+            });
+        } else {
             res.redirect('/showFav')
-        })
+        }
+    })
         .catch((err) => {
             errorHandler(err, req, res);
         });
 }
-
 //(show Fav)___________________________________________________
 function renderFav(req, res) {
     const sql = 'SELECT * FROM ydigimon;';
@@ -109,32 +116,32 @@ function updateDigimon(req, res) {
         res.redirect(`/showOne/${req.params.digi_id}`)//مهمه
 
     })
-    .catch((err) => {
-        errorHandler(err, req, res);
-    });
+        .catch((err) => {
+            errorHandler(err, req, res);
+        });
 
 }
 //(delete One)___________________________________________________
 function deleteDigimon(req, res) {
-        const sql = 'DELETE FROM ydigimon WHERE id=$1;';
-        const values = [req.params.digi_id]
-        client.query(sql, values).then((results) => {
-        
-                // res.redirect('pages/details.ejs')
-                res.redirect('/showFav')
-            })
-            .catch((err) => {
-                    errorHandler(err, req, res);
-                });
-            
+    const sql = 'DELETE FROM ydigimon WHERE id=$1;';
+    const values = [req.params.digi_id]
+    client.query(sql, values).then((results) => {
+
+        // res.redirect('pages/details.ejs')
+        res.redirect('/showFav')
+    })
+        .catch((err) => {
+            errorHandler(err, req, res);
+        });
+
 }
 
 //(test)___________________________________________________
 // app.get('/hi',test)
 // function test(req,res){
-    //     res.status(200).send('mais')
-    // }
-    
+//     res.status(200).send('mais')
+// }
+
 //(helper handlers)___________________________________________________
 app.use('*', notFoundHandler)
 
