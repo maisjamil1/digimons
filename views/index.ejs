@@ -6,6 +6,27 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>hi</h1>
+    <h1>get digemons from api</h1>
+    <p> 
+        ما اتفزلك واحطها بالانبوت لانها بتمنع الداتا توصل الباك اند disabled
+        بس عادي لو حطيت readonly
+    </p>
+<div>
+    <%data.forEach((val)=>{%>
+       <section>
+           <h2><%=val.name%></h2>
+           <img src="<%=val.image%>" alt="">
+           <p><%=val.level%></p>
+       </section> 
+       <div>
+        <form class="form" action="/addToDb" method="POST">
+           <input type="text" name="name" value="<%=val.name%>">
+           <input type="text" name="image" value="<%=val.image%>">
+           <input type="text" name="level" value="<%=val.level%>">
+           <button>Add to Favourite</button>
+        </form>
+        </div>
+        <%})%>
+</div>
 </body>
 </html>
