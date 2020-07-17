@@ -30,6 +30,11 @@ app.get('/showFav', renderFav)
 app.get('/showOne/:digi_id', showOneDigimon)
 app.put('/updateOne/:digi_id', updateDigimon)
 app.delete('/deleteOne/:digi_id', deleteDigimon)
+app.get('/search',renderSearch)
+app.post('/search',startSearch)
+app.get('/results',resultsPage)
+
+
 
 /*اذا طلعتللي مشكلة مثلا اني بكبس ع كبسه الحذف بس ما بصير اشي بتاكد من :
 اولا:بتاكد من اكشن الفورم
@@ -126,15 +131,52 @@ function deleteDigimon(req, res) {
     const sql = 'DELETE FROM ydigimon WHERE id=$1;';
     const values = [req.params.digi_id]
     client.query(sql, values).then((results) => {
-
+        
         // res.redirect('pages/details.ejs')
         res.redirect('/showFav')
     })
-        .catch((err) => {
-            errorHandler(err, req, res);
-        });
-
+    .catch((err) => {
+        errorHandler(err, req, res);
+    });
+    
 }
+
+//(render Search page)____________________________________________
+function renderSearch(reg,res){
+    res.render('pages/search.ejs')
+}
+
+//(DO Search )___________________________________________________
+var searchResults;
+function startSearch(req,res){
+    let searchBy=req.body.search
+    // console.log(searchBy);
+    console.log('------------');
+    let text$=req.body[searchBy]
+    
+    let url=`https://digimon-api.herokuapp.com/api/digimon/${searchBy}/${text$}`
+    superagent.get(url).then((data) => {
+        searchResults = data.body.map((obj) => {//انتبه ل.body
+            return new digiCONS(obj)
+        })
+        console.log(searchResults);
+        res.redirect('/results')
+    })
+    .catch((err) => {
+        errorHandler(err, req, res);
+    });
+}
+
+//(show search results )________________________________________
+function resultsPage (req,res){
+    console.log('inside ',searchResults[0].name);
+    res.render('pages/results.ejs', { data: searchResults})
+  
+}
+
+
+
+
 
 //(test)___________________________________________________
 // app.get('/hi',test)

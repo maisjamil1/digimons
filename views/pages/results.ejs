@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>results</title>
+</head>
+<body>
+    <h1>results page</h1>
+   
+    <%data.forEach((val)=>{%>
+        <section>
+            <h2><%=val.name%></h2>
+            <img src="<%=val.image%>" alt="">
+            <p><%=val.level%></p>
+        </section> 
+        <div>
+         <form class="form" action="/addToDb" method="POST">
+            <input type="text" name="name" value="<%=val.name%>" style="display: none;">
+            <input type="text" name="image" value="<%=val.image%>" style="display: none;">
+            <input type="text" name="level" value="<%=val.level%>" style="display: none;">
+            <button>Add to Favourite</button>
+         </form>
+         </div>
+         <%})%>
+</body>
+</html>
